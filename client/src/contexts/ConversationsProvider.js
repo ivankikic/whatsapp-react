@@ -29,7 +29,6 @@ export function ConversationsProvider({ id, children }) {
             return element === b[index]
         })
     }
-
     function addMessageToConversation({ recipients, text, sender }) {
         setConversations(prevConversations => {
             let madeChange = false
@@ -70,8 +69,17 @@ export function ConversationsProvider({ id, children }) {
             return { id: recipient, name }
         })
 
+        const messages = conversation.messages.map(message => {
+            const contact = contacts.find(contact => {
+                return contact.id === message.sender
+            })
+            const name = (contact && contact.name) || message.sender
+            const fromMe = id === message.sender
+            return { ...message, senderName: name, fromMe }
+        })
+
         const selected = index === selectedConversationIndex
-        return { ...conversation, recipients, selected }
+        return { ...conversation, messages, recipients, selected }
     })
 
     const value = {
